@@ -14,6 +14,9 @@ function Home() {
   const imagesLoaded = useImagePreloader([mainPhoto, logo, casaBgTry])
 
   useEffect(() => {
+    // Only set up observer after images are loaded
+    if (!imagesLoaded) return
+
     const observerOptions = {
       threshold: 0.2,
       rootMargin: '0px'
@@ -33,7 +36,7 @@ function Home() {
     if (projectsRef.current) observer.observe(projectsRef.current)
 
     return () => observer.disconnect()
-  }, [])
+  }, [imagesLoaded])
 
   // Array of images - add more images here in the future
   const images = [
