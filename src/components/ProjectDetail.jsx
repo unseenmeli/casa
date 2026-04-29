@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
-import mainPhoto from '../assets/main_photo.jpg'
+import { useState } from 'react'
+import mainPhoto from '../assets/951.png'
 import logo from '../assets/casa.jpg'
 import floorOutline from '../assets/outline.png'
 import { useImagePreloader } from '../hooks/useImagePreloader'
@@ -9,55 +9,29 @@ function ProjectDetail() {
   // Preload all images
   const imagesLoaded = useImagePreloader([mainPhoto, logo, floorOutline])
 
-  const buildingImageRef = useRef(null)
-  const floor4Ref = useRef(null)
-  const floor3Ref = useRef(null)
-  const floor2Ref = useRef(null)
-  const floor1Ref = useRef(null)
+  const [selectedFloor, setSelectedFloor] = useState(null)
+  const [floorMenuOpen, setFloorMenuOpen] = useState(false)
+  const [hoveredFloor, setHoveredFloor] = useState(null)
+  const [isHoveringMenu, setIsHoveringMenu] = useState(false)
 
-  useEffect(() => {
-    if (!imagesLoaded) return
+  const floors = [
+    { id: 4, name: 'F4', block: 'Block №1', apartments: 10, top: '28%', left: '25%', width: '60%' },
+    { id: 3, name: 'F3', block: 'Block №1', apartments: 12, top: '39%' },
+    { id: 2, name: 'F2', block: 'Block №1', apartments: 12, top: '50%' },
+    { id: 1, name: 'F1', block: 'Block №1', apartments: 8, top: '61%' }
+  ]
 
-    const positionFloors = () => {
-      const img = buildingImageRef.current
-      if (!img) return
+  const handleFloorClick = (floor) => {
+    setSelectedFloor(floor)
+  }
 
-      // Get the actual rendered height of the image
-      const imgHeight = img.getBoundingClientRect().height
+  const closePopup = () => {
+    setSelectedFloor(null)
+  }
 
-      // Calculate positions based on percentages that work at your 100% zoom
-      const positions = {
-        floor4: imgHeight * 0.324,
-        floor3: imgHeight * 0.435,
-        floor2: imgHeight * 0.540,
-        floor1: imgHeight * 0.650
-      }
-
-      // Apply positions
-      if (floor4Ref.current) floor4Ref.current.style.top = `${positions.floor4}px`
-      if (floor3Ref.current) floor3Ref.current.style.top = `${positions.floor3}px`
-      if (floor2Ref.current) floor2Ref.current.style.top = `${positions.floor2}px`
-      if (floor1Ref.current) floor1Ref.current.style.top = `${positions.floor1}px`
-    }
-
-    // Position on load and image load
-    const img = buildingImageRef.current
-    if (img && img.complete) {
-      positionFloors()
-    } else if (img) {
-      img.addEventListener('load', positionFloors)
-    }
-
-    // Reposition on window resize
-    window.addEventListener('resize', positionFloors)
-
-    return () => {
-      window.removeEventListener('resize', positionFloors)
-      if (img) {
-        img.removeEventListener('load', positionFloors)
-      }
-    }
-  }, [imagesLoaded])
+  const toggleFloorMenu = () => {
+    setFloorMenuOpen(!floorMenuOpen)
+  }
 
   // Show loading indicator while images are loading
   if (!imagesLoaded) {
@@ -100,79 +74,112 @@ function ProjectDetail() {
           <div className="carousel-track">
             <div className="carousel-slide active">
               <img
-                ref={buildingImageRef}
                 src={mainPhoto}
                 alt="Casa Calda Building"
                 className="building-image"
               />
-              {/* Floor outline overlays - positioned by JavaScript */}
+              {/* Floor outline overlays */}
               <img
-                ref={floor4Ref}
                 src={floorOutline}
                 alt="Floor 4"
-                className="floor-outline-overlay floor-4"
+                className={`floor-outline-overlay floor-4 ${hoveredFloor === 4 ? 'force-visible' : ''}`}
+                onClick={() => handleFloorClick(floors[0])}
               />
               <img
-                ref={floor3Ref}
                 src={floorOutline}
                 alt="Floor 3"
-                className="floor-outline-overlay floor-3"
+                className={`floor-outline-overlay floor-3 ${hoveredFloor === 3 ? 'force-visible' : ''}`}
+                onClick={() => handleFloorClick(floors[1])}
               />
               <img
-                ref={floor2Ref}
                 src={floorOutline}
                 alt="Floor 2"
-                className="floor-outline-overlay floor-2"
+                className={`floor-outline-overlay floor-2 ${hoveredFloor === 2 ? 'force-visible' : ''}`}
+                onClick={() => handleFloorClick(floors[2])}
               />
               <img
-                ref={floor1Ref}
                 src={floorOutline}
                 alt="Floor 1"
-                className="floor-outline-overlay floor-1"
+                className={`floor-outline-overlay floor-1 ${hoveredFloor === 1 ? 'force-visible' : ''}`}
+                onClick={() => handleFloorClick(floors[3])}
               />
             </div>
           </div>
+
+          {/* Floor info popup */}
+          {selectedFloor && (
+            <div className="floor-popup-overlay" onClick={closePopup}>
+              <div className="floor-popup" onClick={(e) => e.stopPropagation()}>
+                <button className="floor-popup-close" onClick={closePopup}>×</button>
+                <h3>{selectedFloor.name}</h3>
+                <p>{selectedFloor.block}</p>
+                <p>Available apartments: {selectedFloor.apartments}</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Project Info Section */}
       <section className="project-info-section">
+        <div className="project-header-wrapper">
+          <div className="project-breadcrumb">
+            <span className="breadcrumb-item">CASA CALDA</span>
+            <span className="breadcrumb-divider"></span>
+            <span className="breadcrumb-item">DIDI DIGHOMI</span>
+            <span className="breadcrumb-separator"></span>
+            <span className="breadcrumb-item">FLOOR</span>
+            <div style={{ position: 'relative' }}>
+              <button className="breadcrumb-arrow" onClick={toggleFloorMenu}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 15L12 9L6 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              {floorMenuOpen && (
+                <div
+                  className="floor-dropdown-menu"
+                  onMouseEnter={() => setIsHoveringMenu(true)}
+                  onMouseLeave={() => {
+                    setIsHoveringMenu(false)
+                    setFloorMenuOpen(false)
+                    setHoveredFloor(null)
+                  }}
+                >
+                  {floors.map((floor) => (
+                    <div
+                      key={floor.id}
+                      className="floor-menu-item"
+                      onMouseEnter={() => setHoveredFloor(floor.id)}
+                      onMouseLeave={() => setHoveredFloor(null)}
+                      onClick={() => {
+                        handleFloorClick(floor)
+                        setFloorMenuOpen(false)
+                      }}
+                    >
+                      {floor.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
         <div className="container">
-          <h2 className="project-title-detail">Didi Digomi Casa</h2>
-          <p className="project-subtitle-detail">Modern residential complex with contemporary design and premium amenities</p>
-          <p className="project-description-detail">Click on any floor to explore apartments and discover your perfect home in the heart of Tbilisi's fastest-growing district.</p>
+          <h1 className="gallery-title">GALLERY</h1>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h3>Casa Calda Development</h3>
-              <p>Building dreams into reality with innovative residential developments across Georgia.</p>
-            </div>
-
-            <div className="footer-links">
-              <h4>Quick Links</h4>
-              <ul>
-                <li><Link to="/">Projects</Link></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><Link to="/about">About</Link></li>
-                <li><a href="#contact">Contact</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-contact">
-              <h4>Contact</h4>
-              <p><a href="tel:+995544556600">+995 544556600</a></p>
-              <p><a href="mailto:casacaldadevelopment@gmail.com">casacaldadevelopment@gmail.com</a></p>
-            </div>
+      <footer className="footer-minimal">
+        <div className="footer-minimal-container">
+          <div className="footer-minimal-brand">
+            <h3>Casa Calda Development</h3>
+            <p>Building dreams into reality with innovative residential developments across Georgia.</p>
           </div>
-
-          <div className="footer-bottom">
-            <p>&copy; 2024 Casa Calda Development. All rights reserved.</p>
+          <div className="footer-minimal-contact">
+            <a href="tel:+995544556600">+995 544 556 600</a>
+            <a href="mailto:casacaldadevelopment@gmail.com">casacaldadevelopment@gmail.com</a>
+            <p className="footer-copyright">&copy; 2024 Casa Calda Development. All rights reserved.</p>
           </div>
         </div>
       </footer>
