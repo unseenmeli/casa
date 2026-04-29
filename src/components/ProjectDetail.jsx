@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import mainPhoto from '../assets/951.png'
 import logo from '../assets/casa.jpg'
@@ -6,6 +6,7 @@ import floorOutline from '../assets/outline.png'
 import { useImagePreloader } from '../hooks/useImagePreloader'
 
 function ProjectDetail() {
+  const navigate = useNavigate()
   // Preload all images
   const imagesLoaded = useImagePreloader([mainPhoto, logo, floorOutline])
 
@@ -22,7 +23,7 @@ function ProjectDetail() {
   ]
 
   const handleFloorClick = (floor) => {
-    setSelectedFloor(floor)
+    navigate(`/project/didi-digomi-casa/floor-${floor.id}`)
   }
 
   const closePopup = () => {

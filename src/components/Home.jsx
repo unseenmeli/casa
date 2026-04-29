@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 import mainPhoto from '../assets/main_photo.jpg'
 import logo from '../assets/casa.jpg'
 import casaBgTry from '../assets/sunsunsun.png'
+import casaLogoFull from '../assets/casa-logo-full.png'
+import casaLogoWhite from '../assets/casa-logo-white.png'
+import digImage from '../assets/dig.png'
 import { useImagePreloader } from '../hooks/useImagePreloader'
 
 function Home() {
@@ -11,7 +14,7 @@ function Home() {
   const projectsRef = useRef(null)
 
   // Preload all images
-  const imagesLoaded = useImagePreloader([mainPhoto, logo, casaBgTry])
+  const imagesLoaded = useImagePreloader([mainPhoto, logo, casaBgTry, casaLogoFull, casaLogoWhite, digImage])
 
   useEffect(() => {
     // Only set up observer after images are loaded
@@ -147,23 +150,50 @@ function Home() {
         </div>
       </section>
 
-      {/* Our Story Section */}
-      <section className="our-story-section fade-in-scroll" ref={storyRef} style={{
-        backgroundImage: `linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(42, 42, 42, 0.8) 100%), url(${casaBgTry})`,
-        backgroundColor: '#1a1a1a'
-      }}>
+      {/* Our Story Section - Redesigned */}
+      <section className="our-story-redesign fade-in-scroll" ref={storyRef}>
         <div className="container">
-          <h2 className="story-heading">Our Story</h2>
-          <div className="story-content">
-            <p className="story-intro">
-              For over 15 years, we've been committed to creating exceptional residential communities that combine modern luxury with timeless design, setting new standards in Georgia's real estate market.
-            </p>
-            <p className="story-text">
-              Founded in 2018, Casa Calda Development was built upon the solid foundation of a team with over two decades of industry expertise. Backed by the experience of professionals who have been delivering complex residential and industrial projects since 2001, the company brings a deep understanding of market dynamics and development processes.
-            </p>
-            <Link to="/about" className="view-more-btn">
-              View More About Us
-            </Link>
+          <div className="story-grid">
+            {/* Left side - Title and decoration */}
+            <div className="story-left">
+              <div className="story-decorative-lines">
+                <div className="story-line story-line-1"></div>
+                <div className="story-line story-line-2"></div>
+                <div className="story-line story-line-3"></div>
+              </div>
+              <h2 className="story-heading-redesign">Our Story</h2>
+              <div className="story-year">Since 2018</div>
+              <img src={casaLogoFull} alt="Casa Calda Development" className="story-logo-image" />
+            </div>
+
+            {/* Right side - Content */}
+            <div className="story-right">
+              <div className="story-text-block">
+                <p className="story-lead">
+                  For over 15 years, we've been committed to creating exceptional residential communities that combine modern luxury with timeless design.
+                </p>
+                <p className="story-body">
+                  Founded in 2018, Casa Calda Development was built upon the solid foundation of a team with over two decades of industry expertise. Backed by professionals who have been delivering complex residential and industrial projects since 2001, we bring a deep understanding of market dynamics and development processes.
+                </p>
+                <div className="story-stats">
+                  <div className="story-stat-item">
+                    <span className="story-stat-number">15+</span>
+                    <span className="story-stat-label">Years Experience</span>
+                  </div>
+                  <div className="story-stat-divider"></div>
+                  <div className="story-stat-item">
+                    <span className="story-stat-number">2001</span>
+                    <span className="story-stat-label">Team Since</span>
+                  </div>
+                </div>
+                <Link to="/about" className="story-learn-more">
+                  Learn More About Us
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -171,51 +201,39 @@ function Home() {
       {/* Our Projects Section */}
       <section className="our-projects-section fade-in-scroll" ref={projectsRef}>
         <div className="container">
-          <h2 className="projects-heading">Our Projects</h2>
-          <p className="projects-subtitle">Crafting exceptional spaces where modern design meets timeless elegance</p>
-
-          {/* Decorative Lines */}
-          <div className="decorative-lines">
-            <div className="line line-1"></div>
-            <div className="line line-2"></div>
+          {/* Title and subtitle */}
+          <div className="story-decorative-lines">
+            <div className="story-line story-line-1"></div>
+            <div className="story-line story-line-2"></div>
+            <div className="story-line story-line-3"></div>
           </div>
+          <h2 className="projects-heading-redesign">Our Projects</h2>
+          <p className="projects-subtitle-orange">Crafting exceptional spaces where modern design meets timeless elegance</p>
 
-          {/* Gallery placeholder - will be implemented next */}
-          <div className="projects-gallery">
-            {/* Gallery content will go here */}
+          {/* Projects Gallery - Row of images */}
+          <div className="projects-gallery-row">
+            <div className="project-image-wrapper">
+              <img src={digImage} alt="Didi Digomi Project" className="project-gallery-image" />
+              <Link to="/project/didi-digomi-casa" className="project-overlay-left">
+                <button className="view-project-btn-left">View Project</button>
+              </Link>
+            </div>
+            {/* More project images will go here */}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-brand">
-              <h3>Casa Calda Development</h3>
-              <p>Building dreams into reality with innovative residential developments across Georgia.</p>
-            </div>
-
-            <div className="footer-links">
-              <h4>Quick Links</h4>
-              <ul>
-                <li><Link to="/">Projects</Link></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><Link to="/about">About</Link></li>
-                <li><a href="#contact">Contact</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-contact">
-              <h4>Contact</h4>
-              <p><a href="tel:+995544556600">+995 544556600</a></p>
-              <p><a href="mailto:casacaldadevelopment@gmail.com">casacaldadevelopment@gmail.com</a></p>
-            </div>
+      <footer className="footer-minimal">
+        <div className="footer-minimal-container">
+          <div className="footer-minimal-brand">
+            <h3>Casa Calda Development</h3>
+            <p>Building dreams into reality with innovative residential developments across Georgia.</p>
           </div>
-
-          <div className="footer-bottom">
-            <p>&copy; 2024 Casa Calda Development. All rights reserved.</p>
+          <div className="footer-minimal-contact">
+            <a href="tel:+995544556600">+995 544 556 600</a>
+            <a href="mailto:casacaldadevelopment@gmail.com">casacaldadevelopment@gmail.com</a>
+            <p className="footer-copyright">&copy; 2024 Casa Calda Development. All rights reserved.</p>
           </div>
         </div>
       </footer>
